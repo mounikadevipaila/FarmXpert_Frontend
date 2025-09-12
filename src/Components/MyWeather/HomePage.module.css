@@ -1,0 +1,93 @@
+/* .container {
+  background: linear-gradient(#e8f5e9, #f1f8e9);
+  min-height: 100vh;
+  padding: 20px;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.title {
+  font-size: 2rem;
+  color: #2e7d32;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.card {
+  background-color: #e3f2fd;
+  border: 2px solid #aed581;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 15px auto;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+  animation: slideUp 1s ease;
+}
+
+.card h2 {
+  color: #0277bd;
+  font-size: 1.3rem;
+}
+
+.card p {
+  font-size: 1rem;
+  margin: 6px 0;
+}
+
+.recommend {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  color: #33691e;
+  font-weight: bold;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  } to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} */
+
+
+
+
+
+.container {
+  background: linear-gradient(135deg, #f0f8ff, #e3f7e7);
+  min-height: 100vh;
+  padding: 40px 20px;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+  margin-top: 80px;
+}
+
+.title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #2f7a1e;
+  margin-bottom: 30px;
+}
+
+.cardWrapper {
+  max-width: 400px;
+  margin: 0 auto 40px;
+}
+
+.loading {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.cropsWrapper {
+  max-width: 600px;
+  margin: 0 auto;
+}

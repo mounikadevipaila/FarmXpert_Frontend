@@ -1,0 +1,110 @@
+.screen4 {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-height: 100vh;
+  height: fit-content;
+  background-color: #c7f1c1;
+  /* background: linear-gradient(to bottom right, #51c63f, #44B333, #1d7e2b, #165D1B); */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.wishlist-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  /* background-color: white; */
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.wishlist-title {
+  flex-grow: 1;
+  text-align: center;
+
+}
+
+.text-center {
+  color: white;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.fertilizer-card {
+  width: 90%;
+  height: 250px;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fertilizer-card:hover {
+  transform: scale(1.08);
+  box-shadow: 15px 15px 25px rgba(0, 0, 0, 0.4);
+}
+
+.one {
+  width: 100%;
+  height: 5%;
+  background-color: #fbbc42;
+}
+
+.two {
+  width: 80%;
+  height: 70%;
+}
+
+.two img {
+  width: 80%;
+  height: 80%;
+}
+
+.card_detail {
+  width: 100%;
+  height: 25%;
+  display: flex;
+  flex-direction: row;
+}
+
+.nameprice {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.three,
+.four {
+  width: 100%;
+  height: 50%;
+  font-size: 0.9rem;
+  color: black;
+  font-weight: bold;
+}
+
+.heart {
+  width: 20%;
+  height: 100%;
+  font-size: 1.3rem;
+  color: #fbbc42;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.heart.liked {
+  color: #44B333;
+}
+
+
+
+
+
+
+

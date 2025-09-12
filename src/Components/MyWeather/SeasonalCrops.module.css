@@ -1,0 +1,105 @@
+/* SeasonalCrops.module.css
+.selectRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem auto;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  background: #4caf50;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+select {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+} */
+
+
+
+
+.selectRow {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  margin: 1.5rem 0;
+}
+
+.selectRow select,
+.selectRow button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.selectRow select {
+  background: #f0fff0;
+  border: 1px solid #4caf50;
+}
+
+.selectRow button {
+  background: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.selectRow button:hover {
+  background: #45a049;
+}
+
+.card {
+  background: #fcfff3;
+  border-radius: 15px;
+  padding: 1.2rem;
+  margin: 1rem auto;
+  width: 95%;
+  max-width: 600px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.8rem;
+  opacity: 0;
+  animation: fadeInGrid 0.8s forwards;
+}
+
+.card div {
+  background: #ffffff;
+  padding: 0.5rem;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+@keyframes fadeInGrid {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

@@ -1,0 +1,102 @@
+
+  /* Container */
+  .farm_app-container {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 30px 25px;
+    border-radius: 16px;
+    background-color: #ffffff;
+    box-shadow: 0 12px 28px rgba(45, 138, 76, 0.15);
+    text-align: center;
+    margin-top: 120px;
+  }
+  
+  /* Title */
+  .farm_app-container h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: #2d8a4c;
+  }
+  
+  /* File Input */
+  .farm_file-input {
+    width: 80%;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px dashed #2d8a4c;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    background-color: #f9fdf9;
+    transition: background-color 0.3s;
+  }
+  
+  .farm_file-input:hover {
+    background-color: #f0fdf2;
+  }
+  
+  /* Image Preview */
+  .farm_image-preview {
+    display: block;
+    width: 100%;
+    max-height: 260px;
+    margin: 20px auto;
+    object-fit: contain;
+  }
+  
+  /* Button */
+  .farm_analyze-btn {
+    padding: 14px 32px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #2d8a4c;
+    background-color: #fbbc42;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 6px 14px rgba(251, 188, 66, 0.35);
+    margin-top: 15px;
+  }
+  
+  .farm_analyze-btn:hover {
+    background-color: #e6a820;
+    transform: translateY(-2px);
+  }
+  
+  /* Result fallback */
+  .farm_result-box {
+    margin-top: 30px;
+    padding: 18px;
+    background-color: #f3fbe8;
+    border-radius: 12px;
+    color: #1a5c2e;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: pre-wrap;
+    min-height: 120px;
+    box-shadow: inset 0 0 10px rgba(45, 138, 76, 0.1);
+    text-align: left;
+    word-break: break-word;
+  }
+  
+  /* Result Styled Output */
+  .farm_result-card {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f9fdf9;
+    border-left: 6px solid #2d8a4c;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(45, 138, 76, 0.1);
+    color: #1a5c2e;
+    font-size: 16px;
+    text-align: left;
+    line-height: 1.6;
+  }
+  
+  .farm_result-card p {
+    margin: 10px 0;
+    font-weight: 500;
+  }
+  

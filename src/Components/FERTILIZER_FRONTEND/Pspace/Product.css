@@ -1,0 +1,63 @@
+.daj{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999; 
+}
+.screen1{
+    width: 100%; height: 15svh;background-color: white;
+    margin-top: 80px;
+}
+.Header{
+    width:97%; height:85%;
+    /* border:2px solid black; */
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold; display:flex; flex-direction: row;
+    overflow: hidden;
+}
+.H_sec1{
+    width:16%;
+    height:100%; color:#fbbc42;
+    font-size: 2rem;
+    cursor: pointer;
+}
+.welcome{
+    font-size: 1.8rem; color:#2d8a4c; font-weight: bold;
+}
+.Cart,.Wishlist{
+    width:50%; height:50%;
+    border-radius: 50%; font-size: 2rem;
+}
+.Cart:hover,
+.Wishlist:hover {
+    border: 2px solid black;;
+}
+.H_sec2{
+    width:70%;
+    height:100%;
+}
+.H_sec3,.H_sec4{
+    width:7%;
+    height:100%;
+    color:#fbbc42; cursor:pointer;
+    font-size: 1.5rem;
+}
+.H_sec3.daj {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.H_sec3.daj:hover {
+  color: green;
+}
+
+.screen1 {
+    transition: all 0.3s ease;
+}
+

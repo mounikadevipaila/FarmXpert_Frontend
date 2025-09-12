@@ -1,0 +1,240 @@
+/* FertilizerCategories.css */
+:root {
+  --primary: #2e7d32;
+  --primary-light: #4caf50;
+  --primary-dark: #1b5e20;
+  --secondary: #f9a825;
+  --light-bg: #f8fbf8;
+  --text: #333;
+  --text-light: #666;
+  --white: #fff;
+  --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
+}
+
+.fertilizer-categories {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  color: var(--text);
+}
+
+/* Banner Styles */
+.banner {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius: 16px;
+  padding: 40px 30px;
+  margin-bottom: 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.banner::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+}
+
+.banner::after {
+  content: "";
+  position: absolute;
+  bottom: -30px;
+  left: -30px;
+  width: 150px;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 2;
+}
+
+.banner h1 {
+  font-size: 2.8rem;
+  margin: 0 0 15px 0;
+  color: var(--white);
+  font-weight: 700;
+}
+
+.banner p {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Categories Grid */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.category-card {
+  background: var(--white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.category-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.category-header {
+  background: var(--light-bg);
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid rgba(76, 175, 80, 0.1);
+}
+
+.category-icon {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-right: 15px;
+  background: rgba(76, 175, 80, 0.1);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chemical-icon {
+  position: relative;
+  margin-right: 15px;
+}
+
+.chemical-icon .flask {
+  font-size: 2.2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.chemical-icon::before {
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 50%;
+  top: -8px;
+  left: -8px;
+}
+
+.category-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.category-items {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  flex: 1;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-radius: 12px;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.category-item:hover {
+  background: var(--light-bg);
+  transform: translateX(5px);
+}
+
+.category-item .item-icon {
+  width: 45px;
+  height: 45px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin-right: 15px; */
+  font-size: 1.4rem;
+  color: var(--primary);
+  transition: var(--transition);
+}
+
+.category-item:hover .item-icon {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.category-item span {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .banner {
+    padding: 30px 20px;
+  }
+  
+  .banner h1 {
+    font-size: 2.2rem;
+  }
+  
+  .banner p {
+    font-size: 1rem;
+  }
+  
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .category-header {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .fertilizer-categories {
+    padding: 15px;
+  }
+  
+  .banner h1 {
+    font-size: 1.8rem;
+  }
+  
+  .category-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .category-item span {
+    font-size: 1rem;
+  }
+}

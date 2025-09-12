@@ -1,0 +1,165 @@
+.screen2 {
+  width: 100%;
+  height: fit-content;
+  background: linear-gradient(to bottom right, #3c8a56, #347e4f, #469763, #30583c); /* Green Shades */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  overflow-x: hidden;
+}
+
+.fertilizer-card {
+  width: 90%;
+  height: 250px;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fertilizer-card:hover {
+  transform: scale(1.08);
+  box-shadow: 15px 15px 25px rgba(0, 0, 0, 0.4);
+}
+
+.one {
+  width: 100%;
+  height: 5%;
+  background-color: #fbbc42; /* Accent Yellow */
+}
+
+.two {
+  width: 80%;
+  height: 70%;
+}
+
+.two img {
+  width: 80%;
+  height: 80%;
+}
+
+.card_detail {
+  width: 100%;
+  height: 25%;
+  display: flex;
+  flex-direction: row;
+}
+
+.nameprice {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.three,
+.four {
+  width: 100%;
+  height: 50%;
+  font-size: 0.9rem;
+  color: #2d8a4c; /* Primary text color */
+  font-weight: bold;
+}
+
+.heart {
+  width: 20%;
+  height: 100%;
+  font-size: 1.3rem;
+  color: #fbbc42; /* Accent Yellow */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.heart.liked {
+  color: #2d8a4c; /* Liked state in Green */
+}
+
+/* Responsive Media Queries remain unchanged */
+
+@media (min-width: 320px) and (max-width: 374px) {
+  .fertilizer-card {
+    max-height: 200px;
+    max-width: 200px;
+  }
+  .two {
+    width: 85%;
+    height: 65%;
+  }
+  .two img {
+    width: 100%;
+    height: 100%;
+  }
+  .three {
+    font-size: 4rem;
+  }
+  .four {
+    display: none;
+  }
+  .heart {
+    font-size: 0.2rem;
+  }
+}
+
+@media (min-width: 375px) and (max-width: 424px) {
+  .fertilizer-card {
+    max-height: 200px;
+    max-width: 200px;
+    width: 90%;
+  }
+  .two {
+    width: 85%;
+    height: 65%;
+  }
+  .two img {
+    width: 100%;
+    height: 100%;
+  }
+  .three,
+  .four {
+    font-size: 0.2rem;
+  }
+  .heart {
+    font-size: 0.5rem;
+  }
+}
+
+@media (min-width: 425px) and (max-width: 767px) {
+  .fertilizer-card {
+    max-height: 200px;
+    width: 100%;
+  }
+  .two {
+    width: 85%;
+    height: 70%;
+  }
+  .two img {
+    width: 100%;
+    height: 100%;
+  }
+  .three,
+  .four {
+    font-size: 0.3rem;
+  }
+  .heart {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .fertilizer-card {
+    max-height: 220px;
+    width: 95%;
+  }
+  .two {
+    width: 80%;
+    height: 72%;
+  }
+  .three,
+  .four {
+    font-size: 0.3rem;
+  }
+  .heart {
+    font-size: 0.8rem;
+  }
+}
