@@ -5,7 +5,7 @@ import "./DiseaseIdentifier.css";
 function DiseaseIdentifier() {
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Handle file selection
@@ -13,7 +13,7 @@ function DiseaseIdentifier() {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
     setPreviewUrl(selectedFile ? URL.createObjectURL(selectedFile) : null);
-    setResult(""); // Clear previous result
+    setResult(null); // Clear previous result
   };
 
   // Upload and analyze the image
@@ -28,20 +28,32 @@ function DiseaseIdentifier() {
 
     try {
       setLoading(true);
-      // Use environment variable for backend URL
-     const response = await axios.post(
-  `${import.meta.env.VITE_BACKEND_URL}/api/analyze`,
-  formData,
-  {
-    headers: { "Content-Type": "multipart/form-data" },
-  }
-);
 
-      setResult(response.data.result);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/analyze`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      // Expect backend to return { result: { disease: "...", confidence: "..." } } or similar JSON
+      if (response.data && response.data.result) {
+        const resData = response.data.result;
+
+        // If result is object, convert to readable string
+        const formattedResult =
+          typeof resData === "object" ? JSON.stringify(resData, null, 2) : resData;
+
+        setResult(formattedResult);
+      } else {
+        setResult("❌ No result returned from server");
+      }
     } catch (error) {
       console.error("Error uploading image:", error);
       setResult(
-        "❌ Error: " + (error.response?.data?.error || error.message)
+        "❌ Error: " +
+          (error.response?.data?.error || error.message || "Unknown error")
       );
     } finally {
       setLoading(false);
@@ -71,15 +83,13 @@ function DiseaseIdentifier() {
         {loading ? "Analyzing..." : "Analyze"}
       </button>
 
-      {result ? (
-        <div className="farm_result-card">
-          {result.split("\n").map((line, index) => (
-            <p key={index}>{line}</p>
-          ))}
-        </div>
-      ) : (
-        <div className="farm_result-box">Results will appear here...</div>
-      )}
+      <div className="farm_result-box">
+        {result ? (
+          <pre className="farm_result-card">{result}</pre>
+        ) : (
+          <p>Results will appear here...</p>
+        )}
+      </div>
     </div>
   );
 }
