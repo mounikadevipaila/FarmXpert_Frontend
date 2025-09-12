@@ -22,9 +22,12 @@ function AuthPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Use environment variable for backend URL
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const url = isLogin
-      ? "http://localhost:5000/api/login"
-      : "http://localhost:5000/api/signup";
+      ? `${backendUrl}/api/login`
+      : `${backendUrl}/api/signup`;
 
     try {
       const response = await axios.post(
@@ -43,15 +46,18 @@ function AuthPage() {
       } else {
         // Create user object without password
         const { password, ...userData } = formData;
-        localStorage.setItem("currentUser", JSON.stringify({
-          ...userData,
-          farmData: {
-            crops: [],
-            landSize: "",
-            irrigation: "",
-            soilType: ""
-          }
-        }));
+        localStorage.setItem(
+          "currentUser",
+          JSON.stringify({
+            ...userData,
+            farmData: {
+              crops: [],
+              landSize: "",
+              irrigation: "",
+              soilType: "",
+            },
+          })
+        );
         localStorage.setItem("userEmail", formData.email);
         alert("Signup successful! You are now logged in.");
         navigate("/");
@@ -70,9 +76,9 @@ function AuthPage() {
           </h1>
           <p style={styles.tagline}>Empowering Farmers with Smart Solutions 🌾</p>
           <p style={styles.description}>
-            At FarmXpert, we combine technology and tradition to help farmers grow more with less.
-            From crop planning to expert advice and community support, we’re here to make your
-            farming journey smarter, easier, and more profitable.
+            At FarmXpert, we combine technology and tradition to help farmers grow
+            more with less. From crop planning to expert advice and community support,
+            we’re here to make your farming journey smarter, easier, and more profitable.
           </p>
         </div>
       </div>
@@ -85,19 +91,66 @@ function AuthPage() {
           <form onSubmit={handleSubmit} style={styles.form}>
             {!isLogin && (
               <>
-                <input name="firstname" type="text" placeholder="First Name" required onChange={handleChange} style={styles.input} />
-                <input name="lastname" type="text" placeholder="Last Name" required onChange={handleChange} style={styles.input} />
-                <input name="mobile" type="text" placeholder="Mobile" required onChange={handleChange} style={styles.input} />
-                <input name="age" type="number" placeholder="Age" required onChange={handleChange} style={styles.input} />
-                <select name="gender" required onChange={handleChange} style={styles.input}>
+                <input
+                  name="firstname"
+                  type="text"
+                  placeholder="First Name"
+                  required
+                  onChange={handleChange}
+                  style={styles.input}
+                />
+                <input
+                  name="lastname"
+                  type="text"
+                  placeholder="Last Name"
+                  required
+                  onChange={handleChange}
+                  style={styles.input}
+                />
+                <input
+                  name="mobile"
+                  type="text"
+                  placeholder="Mobile"
+                  required
+                  onChange={handleChange}
+                  style={styles.input}
+                />
+                <input
+                  name="age"
+                  type="number"
+                  placeholder="Age"
+                  required
+                  onChange={handleChange}
+                  style={styles.input}
+                />
+                <select
+                  name="gender"
+                  required
+                  onChange={handleChange}
+                  style={styles.input}
+                >
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                 </select>
               </>
             )}
-            <input name="email" type="email" placeholder="Email" required onChange={handleChange} style={styles.input} />
-            <input name="password" type="password" placeholder="Password" required onChange={handleChange} style={styles.input} />
+            <input
+              name="email"
+              type="email"
+              placeholder="Email"
+              required
+              onChange={handleChange}
+              style={styles.input}
+            />
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              required
+              onChange={handleChange}
+              style={styles.input}
+            />
             <button type="submit" style={styles.button}>
               {isLogin ? "Login" : "Sign Up"}
             </button>
@@ -122,7 +175,8 @@ const styles = {
   },
   left: {
     flex: 1,
-    backgroundImage: "url('https://i.pinimg.com/736x/d6/90/e8/d690e81cd73dbff7e75b935b33f53e4b.jpg')",
+    backgroundImage:
+      "url('https://i.pinimg.com/736x/d6/90/e8/d690e81cd73dbff7e75b935b33f53e4b.jpg')",
     backgroundSize: "cover",
     backgroundPosition: "center",
     position: "relative",
