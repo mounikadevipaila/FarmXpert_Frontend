@@ -29,13 +29,14 @@ function DiseaseIdentifier() {
     try {
       setLoading(true);
       // Use environment variable for backend URL
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/analyze`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+     const response = await axios.post(
+  `${import.meta.env.VITE_BACKEND_URL}/api/analyze`,
+  formData,
+  {
+    headers: { "Content-Type": "multipart/form-data" },
+  }
+);
+
       setResult(response.data.result);
     } catch (error) {
       console.error("Error uploading image:", error);
