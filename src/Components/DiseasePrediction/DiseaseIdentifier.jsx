@@ -8,13 +8,15 @@ function DiseaseIdentifier() {
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Handle file selection
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
     setPreviewUrl(selectedFile ? URL.createObjectURL(selectedFile) : null);
-    setResult(""); // clear previous result
+    setResult(""); // Clear previous result
   };
 
+  // Upload and analyze the image
   const handleUpload = async () => {
     if (!file) {
       alert("Please select an image first");
@@ -26,9 +28,9 @@ function DiseaseIdentifier() {
 
     try {
       setLoading(true);
-      // Updated URL to match Node.js backend route
+      // Use environment variable for backend URL
       const response = await axios.post(
-        "http://127.0.0.1:5000/api/analyze",
+        `${process.env.REACT_APP_BACKEND_URL}/api/analyze`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -36,6 +38,7 @@ function DiseaseIdentifier() {
       );
       setResult(response.data.result);
     } catch (error) {
+      console.error("Error uploading image:", error);
       setResult(
         "❌ Error: " + (error.response?.data?.error || error.message)
       );
@@ -47,16 +50,23 @@ function DiseaseIdentifier() {
   return (
     <div className="farm_app-container">
       <h2>AI Plant Disease Identifier</h2>
+
       <input
         type="file"
         accept="image/*"
         onChange={handleFileChange}
         className="farm_file-input"
       />
+
       {previewUrl && (
         <img src={previewUrl} alt="Preview" className="farm_image-preview" />
       )}
-      <button onClick={handleUpload} className="farm_analyze-btn" disabled={loading}>
+
+      <button
+        onClick={handleUpload}
+        className="farm_analyze-btn"
+        disabled={loading}
+      >
         {loading ? "Analyzing..." : "Analyze"}
       </button>
 
@@ -74,4 +84,3 @@ function DiseaseIdentifier() {
 }
 
 export default DiseaseIdentifier;
-  
