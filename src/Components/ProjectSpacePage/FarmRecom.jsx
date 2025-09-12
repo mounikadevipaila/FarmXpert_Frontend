@@ -27,41 +27,44 @@ export default function FarmInputPage() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const fields = Object.values(formData);
-    if (fields.some((field) => field === "")) {
-      toast.error("❌ Please fill in all fields.");
-      return;
+  const fields = Object.values(formData);
+  if (fields.some((field) => field === "")) {
+    toast.error("❌ Please fill in all fields.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    // Use environment variable for backend URL
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+    const response = await fetch(`${backendUrl}/api/recommend`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success("🌾 Recommendation fetched!");
+      setTimeout(() => {
+        navigate("recommendations", { state: { crops: data.recommendation } });
+      }, 1500);
+    } else {
+      toast.error(data.error || "❌ Something went wrong.");
     }
+  } catch (err) {
+    console.error("🚫 Error submitting form:", err);
+    toast.error("❌ Server error. Please try again later.");
+  }
 
-    setLoading(true);
-
-    try {
-      const response = await fetch("http://localhost:5000/api/recommend", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success("🌾 Recommendation fetched!");
-        setTimeout(() => {
-          navigate("recommendations", { state: { crops: data.recommendation } });
-        }, 1500); // Slight delay to let user see the toast
-      } else {
-        toast.error(data.error || "❌ Something went wrong.");
-      }
-    } catch (err) {
-      console.error("🚫 Error submitting form:", err);
-      toast.error("❌ Server error. Please try again later.");
-    }
-
-    setLoading(false);
-  };
+  setLoading(false);
+};
 
   return (
     <motion.div
