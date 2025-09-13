@@ -1,19 +1,31 @@
-import React, { useState } from "react";
+// src/Components/FERTILIZER_FRONTEND/Pspace/Cart.js
+import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaMinus, FaPlus } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { RiShoppingBag4Fill } from "react-icons/ri";
+import axios from "axios";
 import "./Cart.css";
 
-const Cart = ({
-  cartItems,
-  setShowCart,
-  increaseQuantity,
-  decreaseQuantity,
-  removeFromCart,
-  setShowBuyForm,
-  setIsCartMode,
-}) => {
+const Cart = ({ setShowCart, setShowBuyForm, setIsCartMode }) => {
+  const [cartItems, setCartItems] = useState([]);
   const [isClosing, setIsClosing] = useState(false);
+
+  const backendUrl = "https://farmxpert-kfjq.onrender.com";
+
+  // Fetch cart items from backend
+  const fetchCartItems = async () => {
+    try {
+      const response = await axios.get(`${backendUrl}/cart`);
+      setCartItems(response.data);
+    } catch (error) {
+      console.error("Error loading cart items:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+
   const grandTotal = cartItems.reduce((acc, item) => acc + item.subtotal, 0);
 
   const handleClose = () => {
@@ -21,27 +33,64 @@ const Cart = ({
     setTimeout(() => setShowCart(false), 300);
   };
 
+  const increaseQuantity = async (index) => {
+    const item = cartItems[index];
+    try {
+      await axios.put(`${backendUrl}/cart/update`, {
+        name: item.name,
+        action: "increase",
+      });
+      fetchCartItems();
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    }
+  };
+
+  const decreaseQuantity = async (index) => {
+    const item = cartItems[index];
+    if (item.quantity <= 1) return;
+    try {
+      await axios.put(`${backendUrl}/cart/update`, {
+        name: item.name,
+        action: "decrease",
+      });
+      fetchCartItems();
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    }
+  };
+
+  const removeFromCart = async (index) => {
+    const item = cartItems[index];
+    try {
+      await axios.delete(`${backendUrl}/cart/remove/${item.name}`);
+      fetchCartItems();
+    } catch (error) {
+      console.error("Error removing from cart:", error);
+    }
+  };
+
   return (
-    <div className={`cart-container ${isClosing ? 'closing' : ''}`}>
+    <div className={`cart-container ${isClosing ? "closing" : ""}`}>
       <div className="cart-overlay" onClick={handleClose}></div>
-      
+
       <div className="cart-content">
-        {/* Cart Header */}
         <div className="cart-header">
           <button className="back-button" onClick={handleClose}>
             <FaArrowLeft />
             <span>Continue Shopping</span>
           </button>
-          
+
           <div className="cart-title">
             <RiShoppingBag4Fill className="cart-icon" />
             <h2>Your Shopping Cart</h2>
           </div>
-          
-          <div className="items-count">{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</div>
+
+          <div className="items-count">
+            {cartItems.length} {cartItems.length === 1 ? "item" : "items"}
+          </div>
         </div>
 
-        {/* Cart Items */}
         <div className="cart-items-container">
           {cartItems.length > 0 ? (
             <div className="cart-items">
@@ -50,32 +99,34 @@ const Cart = ({
                   <div className="item-image">
                     <img src={item.image} alt={item.name} />
                   </div>
-                  
+
                   <div className="item-details">
                     <h3 className="item-name">{item.name}</h3>
-                    
+
                     <div className="quantity-controls">
-                      <button 
-                        className="quantity-btn" 
+                      <button
+                        className="quantity-btn"
                         onClick={() => decreaseQuantity(index)}
                         disabled={item.quantity <= 1}
                       >
                         <FaMinus />
                       </button>
                       <span className="quantity">{item.quantity}</span>
-                      <button 
-                        className="quantity-btn" 
+                      <button
+                        className="quantity-btn"
                         onClick={() => increaseQuantity(index)}
                       >
                         <FaPlus />
                       </button>
                     </div>
-                    
-                    <div className="item-subtotal">₹{item.subtotal.toFixed(2)}</div>
+
+                    <div className="item-subtotal">
+                      ₹{item.subtotal.toFixed(2)}
+                    </div>
                   </div>
-                  
-                  <button 
-                    className="delete-btn" 
+
+                  <button
+                    className="delete-btn"
                     onClick={() => removeFromCart(index)}
                     aria-label="Remove item"
                   >
@@ -98,7 +149,6 @@ const Cart = ({
           )}
         </div>
 
-        {/* Cart Footer */}
         {cartItems.length > 0 && (
           <div className="cart-footer">
             <div className="total-container">
@@ -115,8 +165,8 @@ const Cart = ({
                 <span>₹{grandTotal.toFixed(2)}</span>
               </div>
             </div>
-            
-            <button 
+
+            <button
               className="checkout-btn"
               onClick={() => {
                 setShowCart(false);
