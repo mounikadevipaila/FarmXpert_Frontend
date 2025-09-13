@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { toast } from 'react-toastify';
 import { FaHeart } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { VscThreeBars } from "react-icons/vsc";
@@ -20,12 +19,11 @@ import FertilizerCategories from './FertilizerCategories.jsx';
 import FertilizerCardGrid from './FertilizerCardGrid.jsx';
 import FertilizerDetail from './FertilizerDetail.jsx';
 import Wishlist from './Wishlist.jsx';
-import BuyForm from './BuyForm.jsx';
 import Cart from './Cart.jsx';
 import OrderConfirmed from '../Pspace/OrderConfirmed.jsx';
 
 const Prod_page = () => {
-    const backendUrl = "https://farmxpert-kfjq.onrender.com"; // ✅ Deployed backend
+    const backendUrl = "https://farmxpert-kfjq.onrender.com"; // deployed backend
     const navigate = useNavigate();
     const location = useLocation();
     const screen1Ref = useRef(null);
@@ -81,8 +79,10 @@ const Prod_page = () => {
 
     const increaseQty = () => setQuantity(prev => prev + 1);
     const decreaseQty = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
-    const totalPrice = selectedFertilizer ? selectedFertilizer.unitPrice * quantity : 0;
-    
+    const totalPrice = selectedFertilizer 
+        ? Number(selectedFertilizer.unitPrice) * quantity 
+        : 0;
+
     const handleTypeClick = (type) => {
         const filtered = allfertilizers.filter(f => f.type === type);
         setDisplayedFertilizers(filtered.slice(0, 16));
@@ -90,11 +90,16 @@ const Prod_page = () => {
         closeSidebar();
     };
 
-    // Fetch cart and wishlist from deployed backend
+    // Fetch cart and wishlist
     useEffect(() => {
         fetch(`${backendUrl}/cart`)
             .then(res => res.json())
-            .then(data => setCartItems(data))
+            .then(data => setCartItems(data.map(item => ({
+                ...item,
+                price: Number(item.price),
+                quantity: Number(item.quantity),
+                subtotal: Number(item.subtotal),
+            }))))
             .catch(err => console.error("Error loading cart items:", err));
 
         fetch(`${backendUrl}/wishlist`)
@@ -103,16 +108,13 @@ const Prod_page = () => {
             .catch(err => console.error("Error loading wishlist:", err));
     }, []);
 
-    // Toggle like/unlike
     const toggleLike = async (fertilizer) => {
         const exists = likedFertilizers.find(item => item.name === fertilizer.name);
 
         if (exists) {
             setLikedFertilizers(prev => prev.filter(item => item.name !== fertilizer.name));
             try {
-                await fetch(`${backendUrl}/wishlist/remove/${encodeURIComponent(fertilizer.name)}`, {
-                    method: 'DELETE'
-                });
+                await fetch(`${backendUrl}/wishlist/remove/${encodeURIComponent(fertilizer.name)}`, { method: 'DELETE' });
                 toast.info(`${fertilizer.name} removed from wishlist 💔`);
             } catch (error) {
                 console.error("Error removing from wishlist:", error);
@@ -139,16 +141,12 @@ const Prod_page = () => {
 
     const handleSubmit = async () => {
         const { fullName, email, phone, city, state, pinCode, address, payment } = formData;
-
         if (!fullName || !email || !phone || !city || !state || !pinCode || !address || !payment) {
-            alert("Please fill out all fields.");
-            return;
+            alert("Please fill out all fields."); return;
         }
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^[6-9]\d{9}$/;
         const pinRegex = /^\d{6}$/;
-
         if (!emailRegex.test(email)) return alert("Invalid email format.");
         if (!phoneRegex.test(phone)) return alert("Enter a valid 10-digit phone number.");
         if (!pinRegex.test(pinCode)) return alert("PIN code must be a 6-digit number.");
@@ -156,14 +154,9 @@ const Prod_page = () => {
         try {
             const orderPayload = {
                 ...formData,
-                orderItems: isCartMode
-                    ? cartItems.map(item => ({
-                        name: item.name,
-                        image: item.image,
-                        quantity: item.quantity,
-                        subtotal: item.subtotal,
-                    }))
-                    : [{
+                orderItems: isCartMode 
+                    ? cartItems.map(item => ({ ...item, quantity: Number(item.quantity), subtotal: Number(item.subtotal) }))
+                    : [{ 
                         name: selectedFertilizer.name,
                         image: selectedFertilizer.image,
                         quantity,
@@ -172,12 +165,8 @@ const Prod_page = () => {
                 orderMode: isCartMode ? "cart" : "single",
                 fertilizerName: isCartMode ? "Multiple Items" : selectedFertilizer.name,
                 fertilizerImage: isCartMode ? "multiple.jpg" : selectedFertilizer.image,
-                quantity: isCartMode
-                    ? cartItems.reduce((total, item) => total + item.quantity, 0)
-                    : quantity,
-                totalPrice: isCartMode
-                    ? cartItems.reduce((sum, item) => sum + item.subtotal, 0)
-                    : totalPrice,
+                quantity: isCartMode ? cartItems.reduce((t, i) => t + Number(i.quantity), 0) : quantity,
+                totalPrice: isCartMode ? cartItems.reduce((sum, i) => sum + Number(i.subtotal), 0) : totalPrice,
             };
 
             const res = await fetch(`${backendUrl}/orders/place`, {
@@ -209,7 +198,7 @@ const Prod_page = () => {
 
     const addToCart = async (fertilizer) => {
         const existingIndex = cartItems.findIndex(item => item.name === fertilizer.name);
-        const price = parseFloat(fertilizer.price.replace(/[^\d.]/g, ''));
+        const price = Number(String(fertilizer.price).replace(/[^\d.]/g, '') || 0);
 
         if (existingIndex !== -1) {
             const updatedCart = [...cartItems];
@@ -218,15 +207,7 @@ const Prod_page = () => {
             setCartItems(updatedCart);
             toast.info(`${fertilizer.name} Quantity Increased 🛍️`);
         } else {
-            const newItem = {
-                name: fertilizer.name,
-                image: fertilizer.image,
-                type: fertilizer.type,
-                price: price,
-                quantity: 1,
-                subtotal: price,
-            };
-
+            const newItem = { name: fertilizer.name, image: fertilizer.image, type: fertilizer.type, price, quantity: 1, subtotal: price };
             setCartItems(prev => [...prev, newItem]);
 
             try {
@@ -235,14 +216,9 @@ const Prod_page = () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newItem),
                 });
-
                 if (!res.ok) throw new Error('Failed to add to cart in DB');
                 const data = await res.json();
-                setCartItems(prev =>
-                    prev.map(item =>
-                        item.name === newItem.name ? { ...item, _id: data.item._id } : item
-                    )
-                );
+                setCartItems(prev => prev.map(item => item.name === newItem.name ? { ...item, _id: data.item._id } : item));
                 toast.success(`${newItem.name} Added to cart! 🛒`);
             } catch (error) {
                 toast.error("Error adding to cart ❌");
@@ -259,9 +235,7 @@ const Prod_page = () => {
 
         if (itemToDelete._id) {
             try {
-                await fetch(`${backendUrl}/cart/remove/${itemToDelete._id}`, {
-                    method: 'DELETE',
-                });
+                await fetch(`${backendUrl}/cart/remove/${itemToDelete._id}`, { method: 'DELETE' });
                 toast.info(`${itemToDelete.name} Removed from cart 🗑️`);
             } catch (error) {
                 console.error('MongoDB delete failed:', error);
@@ -269,12 +243,13 @@ const Prod_page = () => {
         }
     };
 
-    const increaseQuantity = async (index) => {
+    const updateQuantity = async (index, increase = true) => {
         const updated = [...cartItems];
         const item = updated[index];
-        const price = typeof item.price === "number" ? item.price : parseFloat(String(item.price).replace(/[^\d.]/g, ''));
+        const price = Number(String(item.price).replace(/[^\d.]/g, '') || 0);
 
-        item.quantity += 1;
+        if (!increase && item.quantity <= 1) return;
+        item.quantity += increase ? 1 : -1;
         item.subtotal = item.quantity * price;
         updated[index] = item;
         setCartItems(updated);
@@ -286,53 +261,19 @@ const Prod_page = () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ quantity: item.quantity, subtotal: item.subtotal }),
                 });
-            } catch (err) {
-                console.error("Failed to update quantity:", err);
-            }
+            } catch (err) { console.error("Failed to update quantity:", err); }
         }
     };
 
-    const decreaseQuantity = async (index) => {
-        const updated = [...cartItems];
-        const item = updated[index];
-        const price = typeof item.price === "number" ? item.price : parseFloat(String(item.price).replace(/[^\d.]/g, ''));
-
-        if (item.quantity > 1) {
-            item.quantity -= 1;
-            item.subtotal = item.quantity * price;
-            updated[index] = item;
-            setCartItems(updated);
-
-            if (item._id) {
-                try {
-                    await fetch(`${backendUrl}/cart/update/${item._id}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ quantity: item.quantity, subtotal: item.subtotal }),
-                    });
-                } catch (err) {
-                    console.error("Failed to update quantity:", err);
-                }
-            }
-        }
-    };
+    const increaseQuantity = (index) => updateQuantity(index, true);
+    const decreaseQuantity = (index) => updateQuantity(index, false);
 
     const handleBuyNow = (fertilizer) => {
-        navigate('/buy-form', {
-            state: {
-                selectedFertilizer: fertilizer,
-                isCartMode: false
-            }
-        });
+        navigate('/buy-form', { state: { selectedFertilizer: fertilizer, isCartMode: false } });
     };
 
     const handleCartBuyNow = () => {
-        navigate('/buy-form', {
-            state: {
-                isCartMode: true,
-                cartItems: cartItems
-            }
-        });
+        navigate('/buy-form', { state: { isCartMode: true, cartItems } });
         setIsCartMode(true);
     };
 
@@ -341,91 +282,29 @@ const Prod_page = () => {
             {!selectedFertilizer && (
                 <div className="screen1 daj" ref={screen1Ref}>
                     <div className="Header daj">
-                        {showScreen2 && (
-                            <div className="H_sec1 daj" onClick={toggleSidebar}><VscThreeBars /></div>
-                        )}
-                        <div className="H_sec2 daj">
-                            <div className="welcome">Welcome to the Fertilizer Resource Hub🌾</div>
-                        </div>
-                        <div className="H_sec3 daj"
-                            onClick={() => {
-                                if (selectedFertilizer) {
-                                    setSelectedFertilizer(null);
-                                    setTimeout(() => {
-                                        setShowFavorites(true);
-                                    }, 300);
-                                } else {
-                                    setShowFavorites(prev => !prev);
-                                }
-                            }}
-                        >
-                            <FaHeart />
-                        </div>
+                        {showScreen2 && (<div className="H_sec1 daj" onClick={toggleSidebar}><VscThreeBars /></div>)}
+                        <div className="H_sec2 daj"><div className="welcome">Welcome to the Fertilizer Resource Hub🌾</div></div>
+                        <div className="H_sec3 daj" onClick={() => setShowFavorites(prev => !prev)}><FaHeart /></div>
                         <div className="H_sec4 daj" onClick={() => setShowCart(!showCart)}><FaCartShopping /></div>
                     </div>
                 </div>
             )}
 
-            <Sidebar
-                sidebarOpen={sidebarOpen}
-                closeSidebar={closeSidebar}
-                selectedType={selectedType}
-                handleTypeClick={handleTypeClick}
-                setDisplayedFertilizers={setDisplayedFertilizers}
-                fertilizers={fertilizers}
-                setSelectedType={setSelectedType}
-            />
+            <Sidebar sidebarOpen={sidebarOpen} closeSidebar={closeSidebar} selectedType={selectedType} handleTypeClick={handleTypeClick} setDisplayedFertilizers={setDisplayedFertilizers} fertilizers={fertilizers} setSelectedType={setSelectedType} />
 
             <WhyFertilizers showScreen2={showScreen2} setShowScreen2={setShowScreen2} />
             <FertilizerBenefits showScreen2={showScreen2} fertilizerBenefits={fertilizerBenefits} />
             <FertilizerCategories showScreen2={showScreen2} />
 
-            <FertilizerCardGrid
-                showScreen2={showScreen2}
-                selectedFertilizer={selectedFertilizer}
-                showCart={showCart}
-                displayedFertilizers={displayedFertilizers}
-                setSelectedFertilizer={setSelectedFertilizer}
-                setQuantity={setQuantity}
-                likedFertilizers={likedFertilizers}
-                toggleLike={toggleLike}
-            />
+            <FertilizerCardGrid showScreen2={showScreen2} selectedFertilizer={selectedFertilizer} showCart={showCart} displayedFertilizers={displayedFertilizers} setSelectedFertilizer={setSelectedFertilizer} setQuantity={setQuantity} likedFertilizers={likedFertilizers} toggleLike={toggleLike} />
 
-            <FertilizerDetail
-                selectedFertilizer={selectedFertilizer}
-                setSelectedFertilizer={setSelectedFertilizer}
-                onBuyNow={handleBuyNow}
-                addToCart={addToCart}
-                bgImage={bg_image}
-            />
+            <FertilizerDetail selectedFertilizer={selectedFertilizer} setSelectedFertilizer={setSelectedFertilizer} onBuyNow={handleBuyNow} addToCart={addToCart} bgImage={bg_image} />
 
-            <Wishlist
-                showFavorites={showFavorites}
-                setShowFavorites={setShowFavorites}
-                likedFertilizers={likedFertilizers}
-                setSelectedFertilizer={setSelectedFertilizer}
-                setQuantity={setQuantity}
-                toggleLike={toggleLike}
-            />
+            <Wishlist showFavorites={showFavorites} setShowFavorites={setShowFavorites} likedFertilizers={likedFertilizers} setSelectedFertilizer={setSelectedFertilizer} setQuantity={setQuantity} toggleLike={toggleLike} />
 
-            {showCart && (
-                <Cart
-                    cartItems={cartItems}
-                    setShowCart={setShowCart}
-                    increaseQuantity={increaseQuantity}
-                    decreaseQuantity={decreaseQuantity}
-                    removeFromCart={removeFromCart}
-                    onBuyNow={handleCartBuyNow}
-                    setIsCartMode={setIsCartMode}
-                />
-            )}
+            {showCart && <Cart cartItems={cartItems} setShowCart={setShowCart} increaseQuantity={increaseQuantity} decreaseQuantity={decreaseQuantity} removeFromCart={removeFromCart} onBuyNow={handleCartBuyNow} setIsCartMode={setIsCartMode} />}
 
-            {showConfirmation && confirmedOrder && (
-                <OrderConfirmed
-                    order={confirmedOrder}
-                    onClose={() => setShowConfirmation(false)}
-                />
-            )}
+            {showConfirmation && confirmedOrder && <OrderConfirmed order={confirmedOrder} onClose={() => setShowConfirmation(false)} />}
 
             <ToastContainer position="top-right" autoClose={1500} />
         </>
