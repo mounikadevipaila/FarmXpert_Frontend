@@ -1,26 +1,52 @@
-// Wishlist.jsx
-import React from "react";
+// src/Components/FERTILIZER_FRONTEND/Pspace/Wishlist.jsx
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaArrowLeft, FaHeart } from "react-icons/fa";
+import axios from "axios";
 import "./Wishlist.css";
 
-const Wishlist = ({
-  showFavorites,
-  setShowFavorites,
-  likedFertilizers,
-  setSelectedFertilizer,
-  setQuantity,
-  toggleLike,
-}) => {
+const Wishlist = ({ showFavorites, setShowFavorites, setSelectedFertilizer, setQuantity }) => {
+  const [likedFertilizers, setLikedFertilizers] = useState([]);
+  const backendUrl = "https://farmxpert-kfjq.onrender.com";
+
+  // Fetch wishlist from backend
+  const fetchWishlist = async () => {
+    try {
+      const response = await axios.get(`${backendUrl}/wishlist`);
+      setLikedFertilizers(response.data);
+    } catch (error) {
+      console.error("Error loading wishlist:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (showFavorites) fetchWishlist();
+  }, [showFavorites]);
+
+  // Toggle like/unlike (add/remove from wishlist)
+  const toggleLike = async (fertilizer) => {
+    try {
+      const exists = likedFertilizers.find((item) => item.name === fertilizer.name);
+      if (exists) {
+        await axios.delete(`${backendUrl}/wishlist/remove/${fertilizer.name}`);
+      } else {
+        await axios.post(`${backendUrl}/wishlist/add`, fertilizer);
+      }
+      fetchWishlist();
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+    }
+  };
+
   return (
     <AnimatePresence mode="wait">
       {showFavorites && (
         <motion.div
           key="wishlist"
           className="screen4 daj"
-          initial={{ x: '100%', opacity: 0 }}
+          initial={{ x: "100%", opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          exit={{ x: '-100%', opacity: 0 }}
+          exit={{ x: "-100%", opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
           <div className="wishlist-header daj">
