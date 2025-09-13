@@ -16,9 +16,15 @@ const Cart = ({ setShowCart, setShowBuyForm, setIsCartMode }) => {
   const fetchCartItems = async () => {
     try {
       const response = await axios.get(`${backendUrl}/cart`);
-      setCartItems(response.data);
+      // Calculate subtotal for each item if not provided
+      const updatedItems = response.data.map(item => ({
+        ...item,
+        subtotal: item.price * item.quantity
+      }));
+      setCartItems(updatedItems);
     } catch (error) {
       console.error("Error loading cart items:", error);
+      alert("Failed to load cart items. Please try again later.");
     }
   };
 
@@ -43,6 +49,7 @@ const Cart = ({ setShowCart, setShowBuyForm, setIsCartMode }) => {
       fetchCartItems();
     } catch (error) {
       console.error("Error updating quantity:", error);
+      alert("Failed to increase quantity.");
     }
   };
 
@@ -57,6 +64,7 @@ const Cart = ({ setShowCart, setShowBuyForm, setIsCartMode }) => {
       fetchCartItems();
     } catch (error) {
       console.error("Error updating quantity:", error);
+      alert("Failed to decrease quantity.");
     }
   };
 
@@ -67,6 +75,7 @@ const Cart = ({ setShowCart, setShowBuyForm, setIsCartMode }) => {
       fetchCartItems();
     } catch (error) {
       console.error("Error removing from cart:", error);
+      alert("Failed to remove item.");
     }
   };
 
