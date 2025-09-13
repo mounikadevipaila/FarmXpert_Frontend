@@ -227,19 +227,23 @@ const Prod_page = () => {
         }
     };
 
+    // 🔹 UPDATED: removeFromCart using _id
     const removeFromCart = async (index) => {
         const itemToDelete = cartItems[index];
-        const updated = [...cartItems];
-        updated.splice(index, 1);
-        setCartItems(updated);
-
-        if (itemToDelete._id) {
-            try {
-                await fetch(`${backendUrl}/cart/remove/${itemToDelete._id}`, { method: 'DELETE' });
-                toast.info(`${itemToDelete.name} Removed from cart 🗑️`);
-            } catch (error) {
-                console.error('MongoDB delete failed:', error);
-            }
+        if (!itemToDelete._id) {
+            toast.error("Cannot delete item, missing ID");
+            return;
+        }
+        try {
+            const res = await fetch(`${backendUrl}/cart/remove/${itemToDelete._id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Failed to remove from cart');
+            const updated = [...cartItems];
+            updated.splice(index, 1);
+            setCartItems(updated);
+            toast.info(`${itemToDelete.name} Removed from cart 🗑️`);
+        } catch (error) {
+            console.error("Error removing from cart:", error);
+            toast.error("Error removing from cart ❌");
         }
     };
 
