@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import { motion } from "framer-motion";
+import axios from "axios"; // ✅ Added for backend requests
 import "./BuyForm.css";
 
 const BuyForm = () => {
@@ -50,15 +51,15 @@ const BuyForm = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.payment) {
       alert("Please select a payment method");
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     // Create order object
     const order = {
       ...formData,
@@ -68,8 +69,20 @@ const BuyForm = () => {
       image: selectedFertilizer.image
     };
 
-    // Navigate to order confirmation with order details
-    navigate("/order-confirmed", { state: { order } });
+    try {
+      // ✅ Send order to backend
+      await axios.post("https://farmxpert-kfjq.onrender.com/orders", order, {
+        headers: { "Content-Type": "application/json" }
+      });
+
+      // Navigate to order confirmation
+      navigate("/order-confirmed", { state: { order } });
+    } catch (error) {
+      console.error("Error submitting order:", error);
+      alert("Failed to place order. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => navigate("/store");
