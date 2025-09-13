@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
-import { FaHeart } from 'react-icons/fa';
+import { FaHeart } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { VscThreeBars } from "react-icons/vsc";
 
@@ -25,9 +25,11 @@ import Cart from './Cart.jsx';
 import OrderConfirmed from '../Pspace/OrderConfirmed.jsx';
 
 const Prod_page = () => {
+    const backendUrl = "https://farmxpert-kfjq.onrender.com"; // ✅ Deployed backend
     const navigate = useNavigate();
     const location = useLocation();
     const screen1Ref = useRef(null);
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [selectedFertilizer, setSelectedFertilizer] = useState(null);
     const [selectedType, setSelectedType] = useState(null);
@@ -53,7 +55,6 @@ const Prod_page = () => {
     const [confirmedOrder, setConfirmedOrder] = useState(null);
     const [isCartMode, setIsCartMode] = useState(false);
 
-    // Handle navigation to BuyForm
     useEffect(() => {
         if (location.pathname === '/buy-form' && location.state) {
             setSelectedFertilizer(location.state.selectedFertilizer);
@@ -89,25 +90,27 @@ const Prod_page = () => {
         closeSidebar();
     };
 
+    // Fetch cart and wishlist from deployed backend
     useEffect(() => {
-        fetch('http://localhost:5000/cart')
+        fetch(`${backendUrl}/cart`)
             .then(res => res.json())
             .then(data => setCartItems(data))
             .catch(err => console.error("Error loading cart items:", err));
 
-        fetch('http://localhost:5000/wishlist')
+        fetch(`${backendUrl}/wishlist`)
             .then(res => res.json())
             .then(data => setLikedFertilizers(data))
             .catch(err => console.error("Error loading wishlist:", err));
     }, []);
 
+    // Toggle like/unlike
     const toggleLike = async (fertilizer) => {
         const exists = likedFertilizers.find(item => item.name === fertilizer.name);
 
         if (exists) {
             setLikedFertilizers(prev => prev.filter(item => item.name !== fertilizer.name));
             try {
-                await fetch(`http://localhost:5000/wishlist/remove/${encodeURIComponent(fertilizer.name)}`, {
+                await fetch(`${backendUrl}/wishlist/remove/${encodeURIComponent(fertilizer.name)}`, {
                     method: 'DELETE'
                 });
                 toast.info(`${fertilizer.name} removed from wishlist 💔`);
@@ -117,7 +120,7 @@ const Prod_page = () => {
         } else {
             setLikedFertilizers(prev => [...prev, fertilizer]);
             try {
-                await fetch('http://localhost:5000/wishlist/add', {
+                await fetch(`${backendUrl}/wishlist/add`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(fertilizer),
@@ -177,7 +180,7 @@ const Prod_page = () => {
                     : totalPrice,
             };
 
-            const res = await fetch("http://localhost:5000/orders/place", {
+            const res = await fetch(`${backendUrl}/orders/place`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(orderPayload),
@@ -194,7 +197,7 @@ const Prod_page = () => {
             setSelectedFertilizer(null);
 
             if (isCartMode) {
-                await fetch("http://localhost:5000/cart/clear", { method: "DELETE" });
+                await fetch(`${backendUrl}/cart/clear`, { method: "DELETE" });
                 setCartItems([]);
                 setIsCartMode(false);
             }
@@ -227,7 +230,7 @@ const Prod_page = () => {
             setCartItems(prev => [...prev, newItem]);
 
             try {
-                const res = await fetch('http://localhost:5000/cart/add', {
+                const res = await fetch(`${backendUrl}/cart/add`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newItem),
@@ -256,7 +259,7 @@ const Prod_page = () => {
 
         if (itemToDelete._id) {
             try {
-                await fetch(`http://localhost:5000/cart/remove/${itemToDelete._id}`, {
+                await fetch(`${backendUrl}/cart/remove/${itemToDelete._id}`, {
                     method: 'DELETE',
                 });
                 toast.info(`${itemToDelete.name} Removed from cart 🗑️`);
@@ -278,7 +281,7 @@ const Prod_page = () => {
 
         if (item._id) {
             try {
-                await fetch(`http://localhost:5000/cart/update/${item._id}`, {
+                await fetch(`${backendUrl}/cart/update/${item._id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ quantity: item.quantity, subtotal: item.subtotal }),
@@ -302,7 +305,7 @@ const Prod_page = () => {
 
             if (item._id) {
                 try {
-                    await fetch(`http://localhost:5000/cart/update/${item._id}`, {
+                    await fetch(`${backendUrl}/cart/update/${item._id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ quantity: item.quantity, subtotal: item.subtotal }),
@@ -314,7 +317,6 @@ const Prod_page = () => {
         }
     };
 
-    // NEW: Function to handle Buy Now navigation
     const handleBuyNow = (fertilizer) => {
         navigate('/buy-form', {
             state: {
@@ -324,7 +326,6 @@ const Prod_page = () => {
         });
     };
 
-    // NEW: Function to handle Cart Buy Now navigation
     const handleCartBuyNow = () => {
         navigate('/buy-form', {
             state: {
@@ -337,7 +338,6 @@ const Prod_page = () => {
 
     return (
         <>
-            {/* Header */}
             {!selectedFertilizer && (
                 <div className="screen1 daj" ref={screen1Ref}>
                     <div className="Header daj">
@@ -366,7 +366,6 @@ const Prod_page = () => {
                 </div>
             )}
 
-            {/* Sidebar */}
             <Sidebar
                 sidebarOpen={sidebarOpen}
                 closeSidebar={closeSidebar}
@@ -377,16 +376,10 @@ const Prod_page = () => {
                 setSelectedType={setSelectedType}
             />
 
-            {/* Fertilizer Importance */}
             <WhyFertilizers showScreen2={showScreen2} setShowScreen2={setShowScreen2} />
-
-            {/* In detail */}
             <FertilizerBenefits showScreen2={showScreen2} fertilizerBenefits={fertilizerBenefits} />
-
-            {/* Categories */}
             <FertilizerCategories showScreen2={showScreen2} />
 
-            {/* Fertilizer Cards */}
             <FertilizerCardGrid
                 showScreen2={showScreen2}
                 selectedFertilizer={selectedFertilizer}
@@ -398,16 +391,14 @@ const Prod_page = () => {
                 toggleLike={toggleLike}
             />
 
-            {/* Dynamic Product Detail View */}
             <FertilizerDetail
                 selectedFertilizer={selectedFertilizer}
                 setSelectedFertilizer={setSelectedFertilizer}
-                onBuyNow={handleBuyNow}  // UPDATED: Use navigation handler
+                onBuyNow={handleBuyNow}
                 addToCart={addToCart}
                 bgImage={bg_image}
             />
 
-            {/* Wishlist */}
             <Wishlist
                 showFavorites={showFavorites}
                 setShowFavorites={setShowFavorites}
@@ -417,7 +408,6 @@ const Prod_page = () => {
                 toggleLike={toggleLike}
             />
 
-            {/* Cart Items */}
             {showCart && (
                 <Cart
                     cartItems={cartItems}
@@ -425,7 +415,7 @@ const Prod_page = () => {
                     increaseQuantity={increaseQuantity}
                     decreaseQuantity={decreaseQuantity}
                     removeFromCart={removeFromCart}
-                    onBuyNow={handleCartBuyNow}  // UPDATED: Use navigation handler
+                    onBuyNow={handleCartBuyNow}
                     setIsCartMode={setIsCartMode}
                 />
             )}
