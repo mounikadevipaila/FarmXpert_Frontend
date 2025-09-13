@@ -12,14 +12,13 @@ const Cart = ({ setShowCart, setShowBuyForm, setIsCartMode }) => {
 
   const backendUrl = "https://farmxpert-kfjq.onrender.com";
 
-  // Fetch cart items from backend
+  // Fetch cart items
   const fetchCartItems = async () => {
     try {
       const response = await axios.get(`${backendUrl}/cart`);
-      // Calculate subtotal for each item if not provided
       const updatedItems = response.data.map(item => ({
         ...item,
-        subtotal: item.price * item.quantity
+        subtotal: item.price * item.quantity,
       }));
       setCartItems(updatedItems);
     } catch (error) {
@@ -39,39 +38,42 @@ const Cart = ({ setShowCart, setShowBuyForm, setIsCartMode }) => {
     setTimeout(() => setShowCart(false), 300);
   };
 
+  // ✅ Increase quantity
   const increaseQuantity = async (index) => {
     const item = cartItems[index];
     try {
-      await axios.put(`${backendUrl}/cart/update`, {
-        name: item.name,
-        action: "increase",
+      await axios.put(`${backendUrl}/cart/update/${item._id}`, {
+        quantity: item.quantity + 1,
+        subtotal: (item.quantity + 1) * item.price,
       });
       fetchCartItems();
     } catch (error) {
-      console.error("Error updating quantity:", error);
+      console.error("Error increasing quantity:", error);
       alert("Failed to increase quantity.");
     }
   };
 
+  // ✅ Decrease quantity
   const decreaseQuantity = async (index) => {
     const item = cartItems[index];
     if (item.quantity <= 1) return;
     try {
-      await axios.put(`${backendUrl}/cart/update`, {
-        name: item.name,
-        action: "decrease",
+      await axios.put(`${backendUrl}/cart/update/${item._id}`, {
+        quantity: item.quantity - 1,
+        subtotal: (item.quantity - 1) * item.price,
       });
       fetchCartItems();
     } catch (error) {
-      console.error("Error updating quantity:", error);
+      console.error("Error decreasing quantity:", error);
       alert("Failed to decrease quantity.");
     }
   };
 
+  // ✅ Remove from cart (by _id)
   const removeFromCart = async (index) => {
     const item = cartItems[index];
     try {
-      await axios.delete(`${backendUrl}/cart/remove/${item.name}`);
+      await axios.delete(`${backendUrl}/cart/remove/${item._id}`);
       fetchCartItems();
     } catch (error) {
       console.error("Error removing from cart:", error);
@@ -104,7 +106,7 @@ const Cart = ({ setShowCart, setShowBuyForm, setIsCartMode }) => {
           {cartItems.length > 0 ? (
             <div className="cart-items">
               {cartItems.map((item, index) => (
-                <div key={index} className="cart-item">
+                <div key={item._id} className="cart-item">
                   <div className="item-image">
                     <img src={item.image} alt={item.name} />
                   </div>
